@@ -1,73 +1,57 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 /**
- * @task :add validation to email, if email is not valid, if not valid email, dont allow to submit
- * @error_message :  "Email is invalid"  if email is wrong. (must be same message) 
- * 
- * 
+ * @task :add validation to email, if email is not valid
+ * @error message : show "Email is invalid" message on wrong email. 
  */
 
 function App() {
+  const fnameRef= useRef(""); 
+  const emailRef = useRef("");
+  const [data, setdata] = useState({}); 
 
-   const fnameRef = useRef(null);
-   const emailRef = useRef(null);
-   const[error,setError]=useState('');
-   const[data,setData]=useState({
-    fname:undefined,
-    lname:undefined
-   });
 
-  //  useEffect(()=>{
-  //    console.log(fnameRef.current.value);
-  //    console.log(fnameRef.current.id);
-  //    console.log(fnameRef.current.name);
-  //    fnameRef.current.focus();
-  //  },[]);
+  const handleSubmit = event => {
+    event.preventDefault();
+   if(error === 'Email is invalid') return ;  
+  
+   const data = {"fname" : fnameRef.current.value, "email": emailRef.current.value}; 
+   console.log(data)
+   setdata((pre)=> data);
+ }
 
-  // useEffect(()=>{
-  //   console.log(data);
-  // },[data]);
+ const [message, setMessage] = useState('');
+ const [error, setError] = useState(null);
 
-  const EmailValidation=(input)=>{
-   if(/^[a-zA-Z0-9]{4,50}@[a-zA-Z0-9]{3,20}\.[a-z]{2,5}$/.test(input)){
-    setError('')
-   }else{
-    setError('Email is invalid')
+ function isValidEmail(email) {
+   return /\S+@\S+\.\S+/.test(email);
+ }
+
+ const handleChange = event => {
+   if (!isValidEmail(event.target.value)) {
+     setError('Email is invalid');
+   } else {
+     setError(null);
    }
-  }
-
-  const onChangeHandler=()=>{
-    setData({
-      fname:fnameRef.current.value,
-      lname:emailRef.current.value
-    })
-    if(emailRef.current.value){
-      EmailValidation(emailRef.current.value);
-    }
-    
-  };
-
-
- /**
-  * code here
-  */
+   setMessage(event.target.value);
+ };
 
   return(
     <div className="App">
       <h1>How About Them Apples</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <fieldset>
           <label>
             <p>First Name</p>
-            <input id='fname' name="name"  onChange={onChangeHandler} ref={fnameRef}/>
+            <input id='fname' name="name"  ref={fnameRef}/>
             <br></br>
             <p>Email</p>
-            <input id='lname' name="name"  onChange={onChangeHandler} ref={emailRef}/>
+            <input id='lname' name="name"  onChange={handleChange} ref={emailRef}/>
             {error && <h2 style={{color: 'red'}}>{error}</h2>}
           </label>
         </fieldset>
 
-        <button id='submit' disabled={data.lname && error==''?false:true} type="submit">Submit</button>
+        <button id='submit' type="submit">Submit</button>
       </form>
       {
         data.fname != undefined && (
